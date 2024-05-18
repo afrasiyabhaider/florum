@@ -17,15 +17,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $user = User::factory(10)->create();
-        $post = Post::factory(200)->recycle($user)->create();
-        $comments = Comment::factory(100)->recycle($user)->recycle($post)->create();
+        $post = Post::factory(200)
+            ->has(Comment::factory(15)->recycle($user))
+            ->recycle($user)
+            ->create();
 
         $afrasiyab = User::factory()
-                    ->has(Post::factory(45))
-                    ->has(Comment::factory(120)->recycle($post))
-                    ->create([
-                        'name' => 'Afrasiyab Haider',
-                        'email' => 'test@example.com'
-                    ]);
+            ->has(Post::factory(45))
+            ->has(Comment::factory(120)->recycle($post))
+            ->create([
+                'name' => 'Afrasiyab Haider',
+                'email' => 'test@example.com'
+            ]);
     }
 }

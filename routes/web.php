@@ -41,4 +41,5 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::get('posts',[PostController::class,'index'])->name('posts.index');
+Route::get('posts', [PostController::class, 'index'])->name('posts.index');
+Route::get('posts/{post}', [PostController::class, 'show'])->name('posts.show');

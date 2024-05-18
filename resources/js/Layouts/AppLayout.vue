@@ -66,9 +66,10 @@ const logout = () => {
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <template v-for="item in menu" :key="item.name" >
                                     <NavLink
-                                        v-if="item.when? item.when(): true"
+                                        v-if="item.when ? item.when(): true"
                                         :href="item.url"
-                                        :active="route().current(item.route)">
+                                        :active="route().current(item.route)"
+                                        >
                                         {{item.name}}
                                     </NavLink>
 

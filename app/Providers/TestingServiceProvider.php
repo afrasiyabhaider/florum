@@ -36,11 +36,14 @@ class TestingServiceProvider extends ServiceProvider
             expect($this->prop($key))->toHaveKeys(['data', 'links', 'meta']);
             return $this;
         });
-        TestResponse::macro('assetHasResource', function (string $key, JsonResource $resource) {
+        TestResponse::macro('assertHasResource', function (string $key, JsonResource $resource) {
             return $this->assertInertia(fn (AssertableInertia $inertia) => $inertia->hasResource($key, $resource));
         });
-        TestResponse::macro('assertHasPaginatedResource',function (string $key, ResourceCollection $resource) {
-            return $this->assertInertia(fn(AssertableInertia $inertia)=> $inertia->hasPaginatedResource($key,$resource));
+        TestResponse::macro('assertHasPaginatedResource', function (string $key, ResourceCollection $resource) {
+            return $this->assertInertia(fn (AssertableInertia $inertia) => $inertia->hasPaginatedResource($key, $resource));
+        });
+        TestResponse::macro('assertComponent', function (string $component) {
+            return $this->assertInertia(fn (AssertableInertia $inertia) => $inertia->component($component));
         });
     }
 }
