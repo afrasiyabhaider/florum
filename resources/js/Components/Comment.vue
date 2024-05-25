@@ -6,9 +6,9 @@
         <div>
             <p class="mt-1">{{ comment.body }}</p>
             <span class="first-letter:uppercase block pt-1 text-xs text-gray-600">By {{ comment.user.name }} {{ relativeDate(comment.created_at) }}</span>
-            <div v-if="comment.can?.delete">
-                <form @submit.prevent="deleteComment">
-                    <PrimaryButton>Delete</PrimaryButton>
+            <div v-if="comment.can?.delete" class="empty:hidden">
+                <form @submit.prevent="$emit('delete',comment.id)" class=" mt-2 text-right">
+                    <button class="text-red-700 hover:font-semibold">Delete</button>
                 </form>
             </div>
         </div>
@@ -17,12 +17,7 @@
 
 <script setup>
 import {relativeDate} from "@/Utilities/date.js";
-import { router, usePage } from "@inertiajs/vue3";
-import PrimaryButton from "./PrimaryButton.vue";
-import { computed } from "vue";
 
 const props = defineProps(['comment']);
-const deleteComment = ()=> router.delete(route('comments.destroy',props.comment.id),{
-    preserveScroll: true
-});
+const emit = defineEmits(['delete']);
 </script>

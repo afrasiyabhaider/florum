@@ -37,3 +37,9 @@ it('can not delete comment after 1 hour', function () {
         ->delete(route('comments.destroy', $comment))
         ->assertForbidden();
 });
+it('redirects to the posts show page with correct page number', function () {
+    $comment = Comment::factory()->create();
+    actingAs($comment->user)
+        ->delete(route('comments.destroy', ['comment' => $comment, 'page' => 2]))
+        ->assertRedirect(route('posts.show', ['post' => $comment->post_id, 'page' => 2]));
+});
