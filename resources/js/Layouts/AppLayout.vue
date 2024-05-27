@@ -7,6 +7,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import ConfirmationModalWrapper from '@/Components/ConfirmationModalWrapper.vue';
 
 defineProps({
     title: String,
@@ -65,11 +66,7 @@ const logout = () => {
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <template v-for="item in menu" :key="item.name" >
-                                    <NavLink
-                                        v-if="item.when ? item.when(): true"
-                                        :href="item.url"
-                                        :active="route().current(item.route)"
-                                        >
+                                    <NavLink v-if="item.when ? item.when() : true" :href="item.url" :active="route().current(item.route)" >
                                         {{item.name}}
                                     </NavLink>
 
@@ -256,5 +253,6 @@ const logout = () => {
                 <slot />
             </main>
         </div>
+        <ConfirmationModalWrapper />
     </div>
 </template>

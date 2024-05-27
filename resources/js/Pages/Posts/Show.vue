@@ -38,6 +38,7 @@ import { router, useForm } from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
 import { computed, ref } from "vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import { useConfirm } from "@/Utilities/Composables/useConfirm.js";
 
 const props = defineProps(['post','comments']);
 const commentsForm = useForm({
@@ -45,6 +46,7 @@ const commentsForm = useForm({
 });
 const commentTextAreaRef = ref(null);
 const commentIdBeingEdited = ref(null);
+const { confirmation } = useConfirm();
 const commentBeingEdited = computed(()=> props.comments.data.find(comment => comment.id === commentIdBeingEdited.value));
 const editComment = (commentId) => {
     commentIdBeingEdited.value = commentId;
@@ -59,14 +61,26 @@ const addComment = () => commentsForm.post(route('posts.comments.store',props.po
     preserveScroll: true,
     onSuccess: () => commentsForm.reset()
 });
-const updateComment = () => commentsForm.put(route('comments.update',{
-    'comment': commentIdBeingEdited.value,
-    'page': props.comments.meta.current_page,
-}),{
-    preserveScroll: true,
-    onSuccess: cancelEditComment
-})
-const deleteComment = (commentId)=> router.delete(route('comments.destroy',{'comment': commentId,'page': props.comments.meta.current_page}),{
-    preserveScroll: true
-});
+const updateComment = async() =>{
+    if (! await confirmation('Are you sure you want to update this comment?')) {
+        commentTextAreaRef.value?.focus();
+        return;
+    }
+    commentsForm.put(route('comments.update',{
+        'comment': commentIdBeingEdited.value,
+        'page': props.comments.meta.current_page,
+    }),{
+        preserveScroll: true,
+        onSuccess: cancelEditComment
+    });
+}
+const deleteComment = async (commentId) => {
+    if (! await confirmation('Are you sure you want to delete this comment?')) {
+        return;
+    }
+
+    router.delete(route('comments.destroy', {comment: commentId, page: props.comments.meta.current_page}), {
+        preserveScroll: true,
+    });
+};
 </script>
