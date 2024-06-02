@@ -34,7 +34,7 @@ it('redirect to posts show page', function () {
         ->put(route('comments.update', $comment), [
             'body' => $newBody
         ])
-        ->assertRedirect(route('posts.show', $comment->post_id));
+        ->assertRedirect($comment->post->showRoute());
 });
 
 it('redirect to correct page of comments', function () {
@@ -44,7 +44,7 @@ it('redirect to correct page of comments', function () {
         ->put(route('comments.update', ['comment' => $comment, 'page' => 2]), [
             'body' => $newBody
         ])
-        ->assertRedirect(route('posts.show', ['post' => $comment->post_id, 'page' => 2]));
+        ->assertRedirect($comment->post->showRoute(['page' => 2]));
 });
 
 it('can not update comment of another user', function () {

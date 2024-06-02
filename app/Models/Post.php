@@ -27,4 +27,9 @@ class Post extends Model
     {
         return Attribute::set(fn ($title) => Str::title($title));
     }
+
+    public function showRoute(array $params = [])
+    {
+        return route('posts.show', [$this, Str::slug($this->title), ...$params]);
+    }
 }

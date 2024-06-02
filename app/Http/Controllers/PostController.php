@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostResource;
-use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -47,14 +46,17 @@ class PostController extends Controller
             'user_id' => $request->user()->id,
         ]);
 
-        return to_route('posts.show', $post->id);
+        return redirect($post->showRoute());
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show(Request $request, Post $post)
     {
+        if (!Str::endsWith($post->showRoute(), $request->path())) {
+            return redirect($post->showRoute($request->query()), 301);
+        }
         $post->load('user');
 
         return inertia('Posts/Show', [
