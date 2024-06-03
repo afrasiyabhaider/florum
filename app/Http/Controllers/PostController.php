@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostResource;
+use App\Http\Resources\TopicResource;
 use App\Models\Post;
+use App\Models\Topic;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -14,13 +17,21 @@ class PostController extends Controller
     {
         $this->authorizeResource(Post::class);
     }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Topic $topic = null)
     {
+        $posts = Post::with(['user', 'topic'])
+            ->when($topic, fn (Builder $query) => $query->whereBelongsTo($topic))
+            ->latest()
+            ->latest('id')
+            ->paginate();
         return inertia('Posts/Index', [
-            'posts' => PostResource::collection(Post::with(['user', 'topic'])->latest()->latest('id')->paginate())
+            'posts' => PostResource::collection($posts),
+            'topics' => fn () => TopicResource::collection(Topic::all()),
+            'selectedTopic' => fn () => $topic ? TopicResource::make($topic) : null,
         ]);
     }
 
@@ -29,7 +40,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return inertia('Posts/Create');
+        return inertia('Posts/Create', [
+            'topics' => fn () => TopicResource::collection(Topic::all()),
+        ]);
     }
 
     /**
@@ -42,6 +55,7 @@ class PostController extends Controller
             'topic_id' => ['required', 'exists:topics,id'],
             'body' => ['required', 'string', 'min:100', 'max:10000'],
         ]);
+
         $post = Post::create([
             ...$data,
             'user_id' => $request->user()->id,
@@ -55,10 +69,11 @@ class PostController extends Controller
      */
     public function show(Request $request, Post $post)
     {
-        if (!Str::endsWith($post->showRoute(), $request->path())) {
-            return redirect($post->showRoute($request->query()), 301);
+        if (!Str::contains($post->showRoute(), $request->path())) {
+            return redirect($post->showRoute($request->query()), status: 301);
         }
-        $post->load('user');
+
+        $post->load('user', 'topic');
 
         return inertia('Posts/Show', [
             'post' => fn () => PostResource::make($post),
