@@ -8,9 +8,10 @@
                     <TextInput id="title" v-model="postForm.title" class="w-full" placeholder="Give it a great title…"/>
                     <InputError :message="postForm.errors.title" class="mt-1"/>
                 </div>
-                <div>
+                <div class="bg-white mt-2">
                     <InputLabel for="body" class="sr-only">body</InputLabel>
-                    <TextArea id="body" v-model="postForm.body" class="w-full mt-1" rows="25" placeholder="Give it a great body..."/>
+                    <MarkdownEditor v-model="postForm.body" />
+                    <!-- <TextArea id="body" v-model="postForm.body" class="w-full mt-1" rows="25" placeholder="Give it a great body..."/> -->
                     <InputError :message="postForm.errors.body" class="mt-1"/>
                 </div>
                 <div>
@@ -28,6 +29,8 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { useForm } from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
 import TextInput from "@/Components/TextInput.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import MarkdownEditor from "@/Components/MarkdownEditor.vue";
 
 const postForm = useForm({
     'title': '',

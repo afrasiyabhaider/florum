@@ -4,14 +4,12 @@
             <h1 class="text-2xl font-bold">{{ post.title }}</h1>
             <span class="block mt-1 text-sm text-gray-600">{{ relativeDate(post.created_at) }} by {{ post.user.name }}</span>
 
-            <article class="mt-6">
-                <pre class="whitespace-pre-wrap font-sans">{{ post.body }}</pre>
-            </article>
+            <article class="mt-6 prose prose-sm max-w-none" v-html="post.html"></article>
             <h1 class="font-semibold text-xl">Comments</h1>
             <form v-if="$page.props.auth.user" @submit.prevent="()=> commentIdBeingEdited?updateComment() : addComment()" class="mt-1">
                 <div>
                     <InputLabel for="body" class="sr-only">Comment</InputLabel>
-                    <TextArea ref="commentTextAreaRef"  id="body" rows="4" v-model="commentsForm.body" placeholder="Speak your mind spock..." :disabled="commentsForm.processing"></TextArea>
+                    <MarkdownEditor ref="commentTextAreaRef"  id="body" rows="4" v-model="commentsForm.body" placeholder="Speak your mind spock..." editorClass="min-h-[160px]"/>
                     <InputError :message="commentsForm.errors.body" class="mt-1"/>
                 </div>
                 <PrimaryButton type="submit" class="mt-3 bg-indigo-600 hover:bg-indigo-500" v-text="commentIdBeingEdited ? 'Update Comment' : 'Add Comment'"></PrimaryButton>
@@ -39,6 +37,7 @@ import InputError from "@/Components/InputError.vue";
 import { computed, ref } from "vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import { useConfirm } from "@/Utilities/Composables/useConfirm.js";
+import MarkdownEditor from "@/Components/MarkdownEditor.vue";
 
 const props = defineProps(['post','comments']);
 const commentsForm = useForm({
