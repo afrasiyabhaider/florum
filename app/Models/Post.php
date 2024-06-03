@@ -14,11 +14,16 @@ class Post extends Model
 {
     use HasFactory;
     use ConvertsMarkdownToHtml;
-    protected $fillable = ['body', 'title', 'html', 'user_id'];
+    protected $fillable = ['body', 'title', 'html', 'topic_id', 'user_id'];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function topic(): BelongsTo
+    {
+        return $this->belongsTo(Topic::class);
     }
 
     public function comments(): HasMany

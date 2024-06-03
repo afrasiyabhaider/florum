@@ -20,7 +20,7 @@ class PostController extends Controller
     public function index()
     {
         return inertia('Posts/Index', [
-            'posts' => PostResource::collection(Post::with('user')->latest()->latest('id')->paginate())
+            'posts' => PostResource::collection(Post::with(['user', 'topic'])->latest()->latest('id')->paginate())
         ]);
     }
 
@@ -38,8 +38,9 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'title' => ['required', 'string', 'max:100', 'min:10'],
-            'body' => ['required', 'string', 'max:10000', 'min:100'],
+            'title' => ['required', 'string', 'min:10', 'max:120'],
+            'topic_id' => ['required', 'exists:topics,id'],
+            'body' => ['required', 'string', 'min:100', 'max:10000'],
         ]);
         $post = Post::create([
             ...$data,
